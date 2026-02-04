@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Exale — Not Every Beginning Has An Ending</title>
+  
+  <link rel="icon" href="images/X_Exale.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    :root { --dark:#0E0E12; --violet:#6A4DFF; --text:#1a1a1a; }
+    html, body { height: 100%; margin: 0; padding: 0; background: #F1F2F6; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
+    
+    /* SCROLL CONTAINERS */
+    #mainScroll { height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; display: block; }
+    section.snap-section { min-height: 100vh; scroll-snap-align: start; display: flex; flex-direction: column; align-items: center; padding: 100px 24px 40px; position: relative; }
+    #siteFooterSection { min-height: auto; height: auto; padding: 0; scroll-snap-align: end; display: block; }
+
+    #subPagesContainer { height: 100%; overflow-y: auto; background: #F1F2F6; padding-top: 80px; display: none; }
+    .sub-page { display: none; max-width: 80rem; margin: 0 auto; padding: 2rem; animation: fadeIn 0.4s ease-out; }
+    .sub-page.active { display: block; }
+
+    /* HEADER */
+    header { position: fixed; top: 0; left: 0; right: 0; z-index: 60; transition: background 0.3s ease; background: transparent; border-bottom: 1px solid transparent; }
+    header.header--scrolled { background: #000; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    
+    /* NAVIGATION LINKS */
+    .nav-link { color: rgba(255,255,255,0.7); transition: color 0.2s; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; cursor: pointer; }
+    .nav-link:hover { color: white; }
+    .nav-link.active-tab { color: var(--violet); } /* Highlight Class */
+
+    /* UI ELEMENTS */
+    .glass-panel { background: rgba(255,255,255,0.72); backdrop-filter: blur(16px); border-radius:16px; padding:32px; border: 1px solid rgba(255,255,255,0.5); }
+    .btn-primary { background:var(--violet); color:white; padding:12px 32px; border-radius:999px; font-weight: 700; transition: transform 0.2s; display: inline-block; cursor: pointer; }
+    .btn-primary:hover { transform: translateY(-2px); }
+
+    .hover-card { transition: all .3s ease; cursor: pointer; border: 1px solid transparent; }
+    .hover-card:hover { transform: translateY(-5px); border-color: var(--violet); box-shadow: 0 10px 30px -10px rgba(106, 77, 255, 0.2); }
+
+    /* HERO */
+    #hero { justify-content: center; background: #000; color: white; padding: 0; overflow: hidden; position: relative; }
+    #heroBg { position: absolute; inset: 0; background-image: url('images/Header_Background.png'); background-size: cover; background-position: center; opacity: 0.6; z-index: 0; }
+    
+    .shining-text {
+      background: linear-gradient(to right, #9ca3af 20%, #ffffff 50%, #9ca3af 80%);
+      background-size: 200% auto;
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: shine 4s linear infinite;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    @keyframes shine { to { background-position: 200% center; } }
+
+    /* SCROLL TRACKER */
+    #scrollTrack { position: fixed; left: 28px; top: 50%; transform: translateY(-50%); height: 60vh; width: 2px; background: rgba(0,0,0,0.1); z-index: 50; border-radius: 99px; }
+    #dragCircle { position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 12px; height: 12px; border-radius: 50%; background: var(--violet); box-shadow: 0 0 15px var(--violet); transition: top 0.1s linear; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width:768px) { #scrollTrack { display: none; } section.snap-section { padding-top: 80px; } }
+  </style>
+</head>
+<body>
+
+  <div id="scrollTrack"><div id="dragCircle"></div></div>
+
+  <header id="siteHeader">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div onclick="navigateTo('home')" class="flex items-center gap-3 cursor-pointer group">
+        <img src="images/Exale.png" alt="Exale" class="h-8 w-auto group-hover:opacity-80 transition" />
+      </div>
+      
+      <nav class="hidden md:flex items-center gap-8">
+        <button id="nav-services" onclick="navigateTo('services')" class="nav-link">Services</button>
+        <button id="nav-partners" onclick="navigateTo('partners')" class="nav-link">Partners</button>
+        <button id="nav-media" onclick="navigateTo('media')" class="nav-link">Media</button>
+        <button id="nav-blog" onclick="navigateTo('blog')" class="nav-link">Blog</button>
+        <button id="nav-about" onclick="navigateTo('about')" class="nav-link">About</button>
+        <button onclick="navigateTo('apply')" class="btn-primary py-2 px-5 text-sm">Apply Now</button>
+      </nav>
+
+      <button id="mobileMenuBtn" class="md:hidden p-2 rounded text-white">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18M3 12h18M3 18h18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div id="mobileNav" class="fixed inset-0 bg-black/95 z-[70] flex items-center justify-center hidden transition-opacity">
+    <button id="closeMobileBtn" class="absolute top-6 right-6 text-white p-2">✕</button>
+    <nav class="flex flex-col gap-8 text-2xl font-bold text-center text-white">
+      <button onclick="navigateTo('services')">Services</button>
+      <button onclick="navigateTo('partners')">Partners</button>
+      <button onclick="navigateTo('media')">Media</button>
+      <button onclick="navigateTo('blog')">Blog</button>
+      <button onclick="navigateTo('about')">About</button>
+      <button onclick="navigateTo('apply')" class="text-violet-400">Apply Now</button>
+    </nav>
+  </div>
+
+  <main id="mainScroll">
+    
+    <section id="hero" class="snap-section">
+      <div id="heroBg"></div>
+      <div class="relative z-10 flex flex-col items-center justify-center h-full px-4 text-center pb-20">
+        <img src="images/X_Exale.png" alt="Exale X" class="w-48 md:w-64 mb-8 drop-shadow-2xl animate-pulse" />
+        <h1 class="text-xl md:text-3xl font-bold shining-text">Not Every Beginning Has An Ending</h1>
+      </div>
+      <div class="absolute bottom-10 z-10 animate-bounce">
+        <svg class="w-6 h-6 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+      </div>
+    </section>
+
+    <section class="snap-section justify-center">
+      <div class="max-w-4xl text-center">
+        <h2 class="text-4xl md:text-6xl font-extrabold mb-8 text-gray-900 leading-tight">Ready to take your <br><span class="text-violet-600">first step?</span></h2>
+        <div class="glass-panel p-10 md:p-14 rounded-3xl shadow-xl">
+          <p class="text-lg md:text-xl text-gray-700 leading-relaxed mb-8">
+            Do you have a groundbreaking idea waiting to be unleashed? At Exale, we specialize in helping individuals like you bring their vision to life. From the moment you connect with us, we listen attentively, understand the core of your idea, and work to identify and resolve any challenges you face. Your entrepreneurial journey begins here.
+          </p>
+          <button onclick="navigateTo('apply')" class="btn-primary text-lg px-10 py-4">Start Your Journey</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="snap-section justify-center">
+      <div class="max-w-4xl text-center mb-10">
+        <h2 class="text-4xl font-extrabold mb-4">Those we <span class="text-violet-600">rely on.</span></h2>
+        <p class="text-gray-600 text-lg">Our success is intertwined with yours. We build partnerships that facilitate seamless execution.</p>
+        <div class="mt-8">
+          <button onclick="navigateTo('partners')" class="text-violet-600 font-bold hover:text-violet-800 transition border-b-2 border-violet-100 pb-1">View All Partners</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="snap-section justify-center">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl md:text-6xl font-extrabold text-gray-900 mb-8">You take a step;<br><span class="text-violet-600">We take you a mile.</span></h2>
+        <div class="max-w-3xl mx-auto glass-panel p-8 rounded-2xl shadow-sm text-left">
+          <p class="text-gray-700 text-lg leading-relaxed">
+            Your ambition drives us. We believe in fostering long-term partnerships built on mutual trust and shared success. Unlike traditional models, we're invested in your journey, offering proper solutions and guidance without necessarily charging for our services. We become your dedicated partner, collaborating on every decision and ensuring your business achieves independence and sustained growth. Together, we turn vision into reality, mile after mile.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="snap-section justify-center">
+      <h2 class="section-heading text-4xl font-extrabold mb-8">Got Any Questions?</h2>
+      <form class="glass-panel p-8 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-6 rounded-3xl w-full max-w-4xl shadow-xl">
+        <input name="name" required placeholder="Name" class="p-4 rounded-xl bg-white/50 border border-gray-200 focus:border-violet-500 outline-none transition" />
+        <input name="company" required placeholder="Company" class="p-4 rounded-xl bg-white/50 border border-gray-200 focus:border-violet-500 outline-none transition" />
+        <input name="email" required type="email" placeholder="Email" class="p-4 rounded-xl bg-white/50 border border-gray-200 focus:border-violet-500 outline-none transition" />
+        <input name="phone" placeholder="Phone" class="p-4 rounded-xl bg-white/50 border border-gray-200 focus:border-violet-500 outline-none transition" />
+        <textarea name="message" required placeholder="Your message" class="md:col-span-2 p-4 rounded-xl bg-white/50 border border-gray-200 focus:border-violet-500 outline-none h-32 resize-none transition"></textarea>
+        <div class="md:col-span-2 text-right"><button type="submit" class="btn-primary w-full md:w-auto px-12 text-lg">Send Message</button></div>
+      </form>
+    </section>
+
+    <section id="siteFooterSection">
+      <footer class="w-full bg-[#0E0E12] text-white py-16 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full bg-[url('images/Header_Background.png')] bg-cover opacity-20 pointer-events-none"></div>
+        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10">
+          <div class="flex flex-col items-center md:items-start">
+            <img src="images/Exale.png" alt="Exale" class="h-8 w-auto mb-4" />
+            <p class="text-gray-400 text-xs leading-relaxed uppercase tracking-widest">NOT EVERY BEGINNING HAS AN ENDING.</p>
+          </div>
+          <div class="flex flex-col items-center md:items-start space-y-3">
+            <h4 class="font-bold text-white mb-1">Contact</h4>
+            <a href="tel:+201010881133" class="text-gray-400 hover:text-white transition text-sm">+20 101 088 1133</a>
+            <a href="mailto:info@exale.net" class="text-gray-400 hover:text-white transition text-sm">info@exale.net</a>
+            <span class="text-gray-500 text-sm">Cairo, Egypt</span>
+          </div>
+          <div class="flex flex-col items-center md:items-start space-y-3">
+            <h4 class="font-bold text-white mb-1">Company</h4>
+            <button onclick="navigateTo('services')" class="text-gray-400 hover:text-white transition text-sm">Services</button>
+            <button onclick="navigateTo('partners')" class="text-gray-400 hover:text-white transition text-sm">Partners</button>
+            <button onclick="navigateTo('blog')" class="text-gray-400 hover:text-white transition text-sm">Blog</button>
+            <button onclick="navigateTo('media')" class="text-gray-400 hover:text-white transition text-sm">Media</button>
+          </div>
+          <div class="flex flex-col items-center md:items-start space-y-3">
+            <h4 class="font-bold text-white mb-1">Legal</h4>
+            <button class="text-gray-400 hover:text-white transition text-sm">Privacy Policy</button>
+            <button class="text-gray-400 hover:text-white transition text-sm">Terms & Conditions</button>
+            <button class="text-gray-400 hover:text-white transition text-sm">Code of Conduct</button>
+          </div>
+        </div>
+        <div class="max-w-6xl mx-auto px-6 mt-12 pt-8 border-t border-white/10 text-center text-xs text-gray-600">
+          © 2026 Exale Inc. All rights reserved.
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <div id="subPagesContainer">
+    
+    <div id="page-services" class="sub-page">
+      <div class="max-w-6xl mx-auto py-10">
+        <h1 class="text-5xl font-extrabold mb-4 text-center">Our Services</h1>
+        <p class="text-gray-500 mb-12 text-center max-w-2xl mx-auto">We provide tailored solutions to ensure your business achieves independence and sustained growth.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="hover-card bg-white p-8 rounded-2xl shadow-sm">
+            <div class="w-12 h-12 bg-violet-100 rounded-lg flex items-center justify-center mb-6 text-2xl text-violet-600">💻</div>
+            <h3 class="font-bold text-xl mb-3 text-gray-900">Web & App Development</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">Full stack development built for scale. We create robust digital experiences that serve as the foundation of your business.</p>
+          </div>
+          <div class="hover-card bg-white p-8 rounded-2xl shadow-sm">
+            <div class="w-12 h-12 bg-violet-100 rounded-lg flex items-center justify-center mb-6 text-2xl text-violet-600">🎯</div>
+            <h3 class="font-bold text-xl mb-3 text-gray-900">Strategic Planning</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">Business planning and market fit analysis. We help you navigate the complexities of the market with data-driven strategies.</p>
+          </div>
+          <div class="hover-card bg-white p-8 rounded-2xl shadow-sm">
+            <div class="w-12 h-12 bg-violet-100 rounded-lg flex items-center justify-center mb-6 text-2xl text-violet-600">✨</div>
+            <h3 class="font-bold text-xl mb-3 text-gray-900">Branding & Design</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">Identity, Design & Storytelling. We craft compelling visual narratives that resonate with your target audience.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-partners" class="sub-page">
+      <div class="max-w-6xl mx-auto py-10">
+        <div class="text-center mb-16">
+          <h1 class="text-5xl font-extrabold mb-6">Our Network</h1>
+          <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Our success is intertwined with yours, and that of our valued network. At Exale, we thrive on creating powerful collaborations. We build partnerships that facilitate seamless execution, enabling the exchange of valuable services and fostering an ecosystem where every entity contributes to collective achievement. We work together, rely on each other, and grow together.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+          <div class="hover-card glass-panel flex flex-col items-center justify-center p-8 text-center aspect-square bg-white"><span class="font-bold text-gray-800 text-xl">Lighthouse Labs</span><span class="text-xs text-gray-500 mt-2 uppercase tracking-wide">Tech</span></div>
+          <div class="hover-card glass-panel flex flex-col items-center justify-center p-8 text-center aspect-square bg-white"><span class="font-bold text-gray-800 text-xl">Venture Grove</span><span class="text-xs text-gray-500 mt-2 uppercase tracking-wide">VC</span></div>
+          <div class="hover-card glass-panel flex flex-col items-center justify-center p-8 text-center aspect-square bg-white"><span class="font-bold text-gray-800 text-xl">Foundry Partners</span><span class="text-xs text-gray-500 mt-2 uppercase tracking-wide">Legal</span></div>
+          <div class="hover-card glass-panel flex flex-col items-center justify-center p-8 text-center aspect-square bg-white"><span class="font-bold text-gray-800 text-xl">Nimbus Cloud</span><span class="text-xs text-gray-500 mt-2 uppercase tracking-wide">Cloud</span></div>
+          <div class="hover-card glass-panel flex flex-col items-center justify-center p-8 text-center aspect-square bg-white"><span class="font-bold text-gray-800 text-xl">Arcade Digital</span><span class="text-xs text-gray-500 mt-2 uppercase tracking-wide">Dev</span></div>
+          <div class="hover-card glass-panel flex flex-col items-center justify-center p-8 text-center aspect-square bg-white"><span class="font-bold text-gray-800 text-xl">Studio Motion</span><span class="text-xs text-gray-500 mt-2 uppercase tracking-wide">Design</span></div>
+        </div>
+        <div class="text-center"><button onclick="navigateTo('apply')" class="bg-violet-600 hover:bg-violet-700 text-white px-10 py-4 rounded-full font-bold text-lg transition shadow-xl hover:shadow-2xl hover:-translate-y-1">Partner with us</button></div>
+      </div>
+    </div>
+
+    <div id="page-media" class="sub-page">
+      <div class="max-w-6xl mx-auto py-10">
+        <h1 class="text-5xl font-extrabold mb-4">Media Center</h1>
+        <p class="text-gray-500 mb-12">Press releases, brand assets, and coverage.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="aspect-video bg-white rounded-xl flex items-center justify-center border border-gray-200 shadow-sm"><span class="text-gray-400">Press Release #1 (Coming Soon)</span></div>
+          <div class="aspect-video bg-white rounded-xl flex items-center justify-center border border-gray-200 shadow-sm"><span class="text-gray-400">Brand Assets</span></div>
+          <div class="aspect-video bg-white rounded-xl flex items-center justify-center border border-gray-200 shadow-sm"><span class="text-gray-400">Gallery</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-blog" class="sub-page">
+      <div class="max-w-4xl mx-auto py-10">
+        <h1 class="text-5xl font-extrabold mb-12">Insights & Stories</h1>
+        <article class="hover-card bg-white p-6 rounded-2xl shadow-sm">
+          <div class="h-64 w-full bg-gray-100 rounded-xl mb-6 overflow-hidden flex items-center justify-center text-gray-300">Image Placeholder</div>
+          <div class="flex items-center gap-3 text-sm text-gray-500 mb-2"><span class="text-violet-600 font-bold uppercase">Entrepreneurship</span><span>•</span><span>Coming Soon</span></div>
+          <h2 class="text-2xl font-bold mb-3">How to Unleash Your Potential</h2>
+          <p class="text-gray-600">The journey of a thousand miles begins with a single step. Stay tuned.</p>
+        </article>
+      </div>
+    </div>
+
+    <div id="page-about" class="sub-page">
+      <div class="max-w-5xl mx-auto py-10 space-y-20">
+        <section>
+          <h1 class="text-4xl md:text-6xl font-extrabold mb-8 tracking-tight">Our Vision: <br><span class="text-violet-600">Your Business, Independent and Thriving</span></h1>
+          <div class="glass-panel p-8 md:p-12 rounded-3xl shadow-sm bg-white">
+            <p class="text-lg md:text-xl text-gray-700 leading-relaxed">
+              At Exale, we are dedicated to guiding you throughout your entrepreneurial journey, from inception to achieving complete business independence. We view ourselves as your committed partner, fostering a relationship built on mutual reliance and collaborative decision-making every step of the way. We believe that every great idea deserves the chance to flourish, and every entrepreneur deserves unwavering support to navigate the complexities of building a successful business.
+            </p>
+          </div>
+        </section>
+        <section>
+          <h2 class="text-3xl font-bold mb-6">The Foundation of Exale: <span class="text-violet-600">Ahmed Khafagy's Journey</span></h2>
+          <p class="text-gray-600 mb-8 leading-relaxed">
+            Exale was founded in Cairo, Egypt, in 2025, by Ahmed Khafagy, a visionary with a deep-seated passion for entrepreneurship and business development. Ahmed brings a wealth of diverse experience to Exale, spanning numerous critical fields essential for business growth. His practical approach is rooted in direct experience, having successfully executed three different startups.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="bg-white p-5 rounded-xl border border-gray-200"><h3 class="font-bold text-gray-900">Branding</h3><p class="text-sm text-gray-500 mt-1">Crafting compelling identities that resonate</p></div>
+            <div class="bg-white p-5 rounded-xl border border-gray-200"><h3 class="font-bold text-gray-900">Business Development</h3><p class="text-sm text-gray-500 mt-1">Forging pathways for growth and expansion</p></div>
+            <div class="bg-white p-5 rounded-xl border border-gray-200"><h3 class="font-bold text-gray-900">Marketing & Advertising</h3><p class="text-sm text-gray-500 mt-1">Connecting businesses with their audience</p></div>
+            <div class="bg-white p-5 rounded-xl border border-gray-200"><h3 class="font-bold text-gray-900">Management</h3><p class="text-sm text-gray-500 mt-1">Leading teams and operations efficiently</p></div>
+            <div class="bg-white p-5 rounded-xl border border-gray-200"><h3 class="font-bold text-gray-900">Graphic Design</h3><p class="text-sm text-gray-500 mt-1">Visualizing ideas into impactful aesthetics</p></div>
+            <div class="bg-white p-5 rounded-xl border border-gray-200"><h3 class="font-bold text-gray-900">Logistics</h3><p class="text-sm text-gray-500 mt-1">Streamlining operations for optimal performance</p></div>
+          </div>
+        </section>
+        <section>
+          <div class="bg-black text-white p-8 md:p-12 rounded-3xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-violet-600 rounded-full blur-[100px] opacity-30 pointer-events-none"></div>
+            <h2 class="text-3xl font-bold mb-6 relative z-10">Our Philosophy: Unleashing Potential, Sustaining Momentum</h2>
+            <p class="text-gray-300 leading-relaxed relative z-10">
+              Ahmed Khafagy firmly believes that everyone deserves a chance to pursue their entrepreneurial dreams. He champions the idea that the initial spark of excitement that ignites a new venture is a powerful force that must be harnessed and nurtured, rather than allowed to settle. This philosophy is the cornerstone of Exale's mission: to empower entrepreneurs to not just start, but to sustain and scale their businesses, ensuring that the initial enthusiasm translates into lasting independence and success. We are here to ensure that your journey is not just begun, but completed with strength and autonomy.
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div id="page-apply" class="sub-page">
+      <div class="max-w-2xl w-full mx-auto text-center py-10">
+        <h1 class="text-3xl md:text-5xl font-extrabold mb-6">Let's build something great.</h1>
+        <p class="text-gray-600 text-lg mb-10 leading-relaxed">
+          Curious to learn more about how Exale can support your business? Do you have an idea you'd like to discuss? We're eager to connect with you, understand your vision, and explore how we can embark on this journey together. Reach out to us today!
+        </p>
+        <form class="text-left bg-white p-8 rounded-3xl shadow-xl space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input placeholder="Name" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 focus:border-violet-600 outline-none transition" />
+            <input placeholder="Email" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 focus:border-violet-600 outline-none transition" />
+          </div>
+          <textarea placeholder="Tell us about your idea..." class="w-full h-32 bg-gray-50 border border-gray-200 rounded-xl p-4 focus:border-violet-600 outline-none transition resize-none"></textarea>
+          <button class="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-4 rounded-xl transition">Submit Application</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const mainScroll = document.getElementById('mainScroll');
+    const subContainer = document.getElementById('subPagesContainer');
+    const header = document.getElementById('siteHeader');
+    const mobileNav = document.getElementById('mobileNav');
+    const track = document.getElementById('scrollTrack');
+    const circle = document.getElementById('dragCircle');
+
+    function navigateTo(target) {
+      mobileNav.classList.add('hidden');
+      document.body.style.overflow = 'hidden';
+
+      // Reset Highlights
+      document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active-tab'));
+
+      if (target === 'home') {
+        // Show Home
+        mainScroll.style.display = 'block';
+        subContainer.style.display = 'none';
+        track.style.display = 'block';
+        header.classList.remove('header--scrolled');
+        mainScroll.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        // Show Sub-Page
+        mainScroll.style.display = 'none';
+        subContainer.style.display = 'block';
+        track.style.display = 'none';
+        
+        // Highlight Tab
+        const activeBtn = document.getElementById('nav-' + target);
+        if(activeBtn) activeBtn.classList.add('active-tab');
+
+        header.classList.add('header--scrolled');
+
+        document.querySelectorAll('.sub-page').forEach(el => el.classList.remove('active'));
+        const page = document.getElementById('page-' + target);
+        if(page) page.classList.add('active');
+        
+        subContainer.scrollTop = 0;
+      }
+    }
+
+    // Scroll Logic for Home
+    function updateTrack() {
+      if(mainScroll.style.display === 'none') return;
+      const st = mainScroll.scrollTop;
+      const sh = mainScroll.scrollHeight - mainScroll.clientHeight;
+      const pct = sh > 0 ? (st / sh) : 0;
+      circle.style.top = `${pct * 100}%`;
+      
+      // Dynamic Header Transparency
+      if (st > 50) header.classList.add('header--scrolled');
+      else header.classList.remove('header--scrolled');
+    }
+
+    mainScroll.addEventListener('scroll', updateTrack);
+    window.addEventListener('resize', updateTrack);
+
+    document.getElementById('mobileMenuBtn').onclick = () => mobileNav.classList.remove('hidden');
+    document.getElementById('closeMobileBtn').onclick = () => mobileNav.classList.add('hidden');
+
+    updateTrack();
+  </script>
+
+  <script type="module" src="./assets/cms-loader.js"></script>
+</body>
+</html>

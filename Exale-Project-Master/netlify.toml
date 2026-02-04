@@ -1,6 +1,2 @@
 [build]
   publish = "Main-Website"
-  command = ""
-
-# Note: To deploy Client-Portal and Admin-Dashboard as separate Netlify sites, create separate sites and set their publish directories to
-# Client-Portal and Admin-Dashboard respectively. DNS/subdomain routing is configured in Netlify's dashboard.
